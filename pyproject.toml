@@ -1,0 +1,22 @@
+[project]
+name = "titan-protocol"
+version = "0.1.0"
+description = "Automated Fundamental Analysis Engine"
+requires-python = ">=3.10"
+dependencies = [
+    "python-dotenv",
+    "pydantic",
+    "pandas",
+    "yfinance",
+    "requests",
+    "chromadb",
+    "google-generativeai",
+    "openai",
+    "anthropic",
+    "rich",
+    "exa-py",
+    "tavily-python"
+]
+
+[tool.setuptools]
+packages = ["src"]
