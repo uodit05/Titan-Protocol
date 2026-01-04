@@ -59,4 +59,34 @@ class FinanceTool:
             print(f"Error fetching news for {ticker}: {e}")
             return []
 
+    def get_financials(self, ticker: str) -> dict:
+        """
+        Fetches full historical financial data: Income Stmt, Balance Sheet, Cash Flow.
+        Returns a dict of cleaned pandas DataFrames.
+        """
+        if not ticker.endswith(".NS") and not ticker.endswith(".BO"):
+             ticker_ns = f"{ticker}.NS"
+        else:
+            ticker_ns = ticker
+            
+        try:
+            stock = yf.Ticker(ticker_ns)
+            
+            # Fetch data
+            income_stmt = stock.financials
+            balance_sheet = stock.balance_sheet
+            cash_flow = stock.cashflow
+            
+            # Clean data (fill NaNs with 0 for calculation safety)
+            # Transpose so that years are rows and metrics are columns (easier for pandas analysis)
+            financials = {
+                "income_stmt": income_stmt.T.fillna(0) if not income_stmt.empty else None,
+                "balance_sheet": balance_sheet.T.fillna(0) if not balance_sheet.empty else None,
+                "cash_flow": cash_flow.T.fillna(0) if not cash_flow.empty else None
+            }
+            return financials
+        except Exception as e:
+            print(f"Error fetching financials for {ticker}: {e}")
+            return {}
+
 finance_tool = FinanceTool()

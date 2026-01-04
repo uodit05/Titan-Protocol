@@ -17,7 +17,16 @@ class Tribunal:
         # Initial Context
         metrics = finance_tool.get_metrics(ticker)
         news = finance_tool.get_news(ticker)
-        initial_context = f"Ticker: {ticker}\nMetrics: {metrics}\nNews: {news}"
+        
+        # Fetch full financials for deep context
+        financials = finance_tool.get_financials(ticker)
+        financial_summary = "Full Financials (Income Stmt, Balance Sheet, Cash Flow) are available for analysis."
+        if financials:
+            # Add a brief summary of available years
+            years = financials['income_stmt'].index.tolist() if financials['income_stmt'] is not None else []
+            financial_summary += f" Data available for years: {years}"
+        
+        initial_context = f"Ticker: {ticker}\nMetrics: {metrics}\nNews: {news}\n{financial_summary}"
         
         history = [f"Initial Data: {initial_context}"]
         
@@ -55,7 +64,8 @@ class Tribunal:
             directive = evaluation.get("directive")
             if directive:
                 print(f"Judge Directive: {directive}")
-                lib_result = self.librarian.execute_directive(directive)
+                # Pass ticker to librarian for context-aware execution (e.g. fetching financials)
+                lib_result = self.librarian.execute_directive(directive, ticker=ticker)
                 history.append(f"Librarian Result for '{directive}': {lib_result}")
             
             loop += 1

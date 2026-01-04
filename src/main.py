@@ -31,12 +31,22 @@ def main():
 
     # 3. Judgment
     from src.stages.judgment import Tribunal
+    import concurrent.futures
+    
     tribunal = Tribunal()
     verdicts = []
     
-    for ticker in passed_tickers:
-        verdict = tribunal.run(ticker)
-        verdicts.append(verdict)
+    print(f"Starting Tribunal for {len(passed_tickers)} tickers in parallel...")
+    
+    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+        future_to_ticker = {executor.submit(tribunal.run, ticker): ticker for ticker in passed_tickers}
+        for future in concurrent.futures.as_completed(future_to_ticker):
+            ticker = future_to_ticker[future]
+            try:
+                verdict = future.result()
+                verdicts.append(verdict)
+            except Exception as exc:
+                print(f'{ticker} generated an exception: {exc}')
 
     # 4. Construction
     from src.stages.construction import CIO
