@@ -54,7 +54,14 @@ class FinanceTool:
         try:
             stock = yf.Ticker(ticker_ns)
             news = stock.news
-            return [n['title'] for n in news]
+            news_items = []
+            for n in news:
+                title = n.get('title')
+                if not title and 'content' in n:
+                    title = n['content'].get('title')
+                if title:
+                    news_items.append(title)
+            return news_items
         except Exception as e:
             print(f"Error fetching news for {ticker}: {e}")
             return []

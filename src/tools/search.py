@@ -9,8 +9,7 @@ class SearchTool:
         if self.exa:
             response = self.exa.search(
                 query,
-                num_results=num_results,
-                use_autoprompt=True
+                num_results=num_results
             )
             return response.results
         else:

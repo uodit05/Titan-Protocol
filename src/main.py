@@ -1,4 +1,10 @@
 import argparse
+import sys
+import os
+
+# Add project root to sys.path to allow running as script
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from src.config import config
 
 def main():
@@ -52,3 +58,6 @@ def main():
     from src.stages.construction import CIO
     cio = CIO()
     cio.generate_report(verdicts)
+
+if __name__ == "__main__":
+    main()
